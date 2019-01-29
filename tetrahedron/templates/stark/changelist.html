@@ -1,0 +1,116 @@
+{% extends 'layout_plus.html' %}
+{% load static %}
+
+{% block content %}
+    <div>
+        {% if search_group_row_list %}
+            <div class="panel panel-color  panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-filter" aria-hidden="true"></i> 快速筛选
+                </div>
+                <div class="panel-body">
+                    <div class="search-group">
+                        {% for row in search_group_row_list %}
+                            <div class="row">
+                                {% for obj in row %}
+                                    {{ obj|safe }}
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="white-box">
+                    <h2 class="header-title">{{ request.menu_name }}</h2>
+                    {% if search_list %}
+                        <div style="float: right;margin: 5px 0;">
+                            <form method="GET" class="form-inline">
+                                <div class="form-group">
+                                    <input class="form-control" type="text" name="q" value="{{ search_value }}"
+                                           placeholder="关键字搜索">
+                                    <button class="btn btn-tumblr" type="submit">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% if action_dict %}
+                            <div style="float: left;margin: 5px 10px 5px 0;">
+                                <div class="form-inline">
+                                    <div class="form-group">
+                                        <select class="form-control" name="action">
+                                            <option value="">请选择操作</option>
+                                            {% for func_name,func_text in action_dict.items %}
+                                                <option value="{{ func_name }}">{{ func_text }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <input class="btn btn-tumblr" type="submit" data-toggle="tooltip"
+                                               data-placement="top" title="执行操作" value="执行"/>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if add_btn %}
+                            <div style="margin: 5px 0;float: left">
+                                {{ add_btn|safe }}
+                            </div>
+                        {% endif %}
+
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                {% for item in header_list %}
+                                    {% if item == "编辑" or item == "删除" %}
+                                        <th style="width: 52px">{{ item }}</th>
+                                    {% else %}
+                                        <th>{{ item }}</th>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for row in body_list %}
+                                <tr>
+                                    {% for ele in row %}
+                                        <td>{{ ele }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </form>
+                    <nav>
+                        <ul class="pagination">
+                            {{ pager.page_html|safe }}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+    //checkbox全选
+    $("#checkAll").on("click", function () {
+        if ($(this).prop("checked") === true) {
+            $("td input[type='checkbox']").prop("checked", $(this).prop("checked"));
+        } else {
+            $("td input[type='checkbox']").prop("checked", false);
+        }
+    });
+    </script>
+{% endblock %}
+
